@@ -147,6 +147,9 @@ function closeSizeMenus(exceptId) {
             button.setAttribute('aria-expanded', 'false');
         }
     });
+    if (!exceptId) {
+        document.body.classList.remove('size-menu-open');
+    }
 }
 
 // Populate product grid
@@ -199,6 +202,7 @@ function populateGrid() {
                 addToCart(product.id, product.name, product.price, size);
                 sizeMenu.hidden = true;
                 buyButton.setAttribute('aria-expanded', 'false');
+                document.body.classList.remove('size-menu-open');
             });
             sizeMenu.appendChild(sizeButton);
         });
@@ -209,6 +213,7 @@ function populateGrid() {
             closeSizeMenus(sizeMenu.id);
             sizeMenu.hidden = isOpen;
             buyButton.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+            document.body.classList.toggle('size-menu-open', !isOpen);
         });
 
         content.appendChild(title);
