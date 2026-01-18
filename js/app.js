@@ -556,19 +556,17 @@ function initHeroSwipe() {
     let startX = 0;
     let startY = 0;
     let isTracking = false;
-    let hasSwiped = false;
 
-    const trySwipe = (deltaX, deltaY) => {
-        if (!isMobileView() || hasSwiped) {
+    const handleSwipeEnd = (deltaX, deltaY) => {
+        if (!isMobileView()) {
             return;
         }
-        if (Math.abs(deltaX) < 30 || Math.abs(deltaX) < Math.abs(deltaY) * 1.1) {
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
             return;
         }
         if (!products.length) {
             return;
         }
-        hasSwiped = true;
         currentProductIndex = deltaX < 0
             ? (currentProductIndex + 1) % products.length
             : (currentProductIndex - 1 + products.length) % products.length;
@@ -586,18 +584,14 @@ function initHeroSwipe() {
             startX = event.clientX;
             startY = event.clientY;
             isTracking = true;
-            hasSwiped = false;
         });
 
-        hero.addEventListener('pointermove', (event) => {
+        hero.addEventListener('pointerup', (event) => {
             if (!isTracking || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) {
                 return;
             }
-            trySwipe(event.clientX - startX, event.clientY - startY);
-        });
-
-        hero.addEventListener('pointerup', () => {
             isTracking = false;
+            handleSwipeEnd(event.clientX - startX, event.clientY - startY);
         });
 
         hero.addEventListener('pointercancel', () => {
@@ -615,19 +609,15 @@ function initHeroSwipe() {
             startX = touch.clientX;
             startY = touch.clientY;
             isTracking = true;
-            hasSwiped = false;
         }, { passive: true });
 
-        hero.addEventListener('touchmove', (event) => {
-            if (!isTracking || !event.touches.length) {
+        hero.addEventListener('touchend', (event) => {
+            if (!isTracking || !event.changedTouches.length) {
                 return;
             }
-            const touch = event.touches[0];
-            trySwipe(touch.clientX - startX, touch.clientY - startY);
-        }, { passive: true });
-
-        hero.addEventListener('touchend', () => {
+            const touch = event.changedTouches[0];
             isTracking = false;
+            handleSwipeEnd(touch.clientX - startX, touch.clientY - startY);
         });
 
         hero.addEventListener('touchcancel', () => {
