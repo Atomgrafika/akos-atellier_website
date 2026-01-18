@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Confinement",
+    "price": 16,
+    "image": "images/T-Shirt-black-01.jpeg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "shirt"
+  },
+  {
+    "id": 2,
+    "name": "New Gods",
+    "price": 48,
+    "image": "images/Hoodie-black-01.jpeg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "hoodie"
+  },
+  {
+    "id": 3,
+    "name": "No S#/T",
+    "price": 16,
+    "image": "images/T-Shirt-cream_black.jpeg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "shirt"
+  },
+  {
+    "id": 4,
+    "name": "Triads of Power",
+    "price": 48,
+    "image": "images/Hoodie-blue-01.jpeg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "hoodie"
+  },
+  {
+    "id": 5,
+    "name": "Futre Something",
+    "price": 16,
+    "image": "images/T-Shirt-white-2.jpg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "shirt"
+  },
+  {
+    "id": 6,
+    "name": "Power of Love",
+    "price": 48,
+    "image": "images/Hoodie-grey-01.jpeg",
+    "sizes": ["S", "M", "L", "XL"],
+    "type": "hoodie"
+  }
+]
