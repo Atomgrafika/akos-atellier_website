@@ -5,6 +5,14 @@ let currentProductIndex = 0;
 // Simple cart functionality
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+let productModal = null;
+let productModalElements = null;
+const productModalState = {
+    productId: null,
+    productName: '',
+    images: [],
+    index: 0
+};
 
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -26,6 +34,252 @@ function showCartToast(productName) {
     showCartToast.hideTimer = window.setTimeout(() => {
         toast.classList.remove('is-visible');
     }, 2200);
+}
+
+function getProductDescription(product) {
+    if (product.description) {
+        return product.description;
+    }
+    if (product.type === 'hoodie') {
+        return 'A heavyweight hoodie with a soft brushed interior, built for warmth and structure. The artwork is laid in with precise line work so the graphic stays crisp through everyday wear.';
+    }
+    return 'A smooth cotton-blend tee with a clean drape and soft hand feel. The print is layered carefully for sharp detail and lasting color through repeated washes.';
+}
+
+function buildGalleryCandidates(product) {
+    if (Array.isArray(product.gallery) && product.gallery.length) {
+        const list = product.gallery.slice();
+        if (!list.includes(product.image)) {
+            list.unshift(product.image);
+        }
+        return list;
+    }
+    const folder = `images/gallery/${product.id}`;
+    const candidates = [product.image];
+    for (let i = 1; i <= 4; i += 1) {
+        candidates.push(`${folder}/${i}.jpg`);
+        candidates.push(`${folder}/${i}.png`);
+    }
+    return [...new Set(candidates)];
+}
+
+function loadGalleryImages(candidates) {
+    const unique = [...new Set(candidates)];
+    return Promise.all(
+        unique.map((src) => new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(src);
+            img.onerror = () => resolve(null);
+            img.src = src;
+        }))
+    ).then((results) => results.filter(Boolean));
+}
+
+function updateProductModalImage() {
+    if (!productModalElements) {
+        return;
+    }
+    const images = productModalState.images;
+    if (!images.length) {
+        return;
+    }
+    const index = productModalState.index % images.length;
+    const src = images[index];
+    productModalElements.image.src = src;
+    productModalElements.image.alt = `${productModalState.productName} image ${index + 1}`;
+    const hasMultiple = images.length > 1;
+    productModalElements.prev.disabled = !hasMultiple;
+    productModalElements.next.disabled = !hasMultiple;
+    productModalElements.prev.classList.toggle('is-disabled', !hasMultiple);
+    productModalElements.next.classList.toggle('is-disabled', !hasMultiple);
+}
+
+function stepProductGallery(step) {
+    const count = productModalState.images.length;
+    if (count < 2) {
+        return;
+    }
+    productModalState.index = (productModalState.index + step + count) % count;
+    updateProductModalImage();
+}
+
+function closeProductModal() {
+    if (!productModal) {
+        return;
+    }
+    productModal.classList.remove('is-open');
+    productModal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('modal-open');
+}
+
+function ensureProductModal() {
+    if (productModal) {
+        return;
+    }
+    productModal = document.createElement('div');
+    productModal.id = 'product-modal';
+    productModal.className = 'product-modal';
+    productModal.setAttribute('aria-hidden', 'true');
+    productModal.innerHTML = `
+        <div class="product-modal-content" role="dialog" aria-modal="true" aria-label="Product details">
+            <button class="product-modal-close" type="button" aria-label="Close">×</button>
+            <div class="product-modal-gallery">
+                <button class="product-modal-arrow product-modal-arrow--prev" type="button" aria-label="Previous image">‹</button>
+                <img class="product-modal-image" alt="">
+                <button class="product-modal-arrow product-modal-arrow--next" type="button" aria-label="Next image">›</button>
+            </div>
+            <div class="product-modal-details">
+                <h2 class="product-modal-title"></h2>
+                <p class="product-modal-price"></p>
+                <p class="product-modal-description"></p>
+                <div class="product-modal-actions">
+                    <select class="product-modal-size" aria-label="Select size"></select>
+                    <button class="product-modal-buy" type="button">Buy 🛒</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(productModal);
+
+    const content = productModal.querySelector('.product-modal-content');
+    productModalElements = {
+        close: productModal.querySelector('.product-modal-close'),
+        prev: productModal.querySelector('.product-modal-arrow--prev'),
+        next: productModal.querySelector('.product-modal-arrow--next'),
+        image: productModal.querySelector('.product-modal-image'),
+        title: productModal.querySelector('.product-modal-title'),
+        price: productModal.querySelector('.product-modal-price'),
+        description: productModal.querySelector('.product-modal-description'),
+        sizeSelect: productModal.querySelector('.product-modal-size'),
+        buyButton: productModal.querySelector('.product-modal-buy'),
+        gallery: productModal.querySelector('.product-modal-gallery'),
+        content
+    };
+
+    productModal.addEventListener('click', (event) => {
+        if (event.target === productModal) {
+            closeProductModal();
+        }
+    });
+
+    productModalElements.close.addEventListener('click', closeProductModal);
+    productModalElements.prev.addEventListener('click', () => stepProductGallery(-1));
+    productModalElements.next.addEventListener('click', () => stepProductGallery(1));
+
+    let startX = 0;
+    let startY = 0;
+    let isTracking = false;
+    const handleSwipeEnd = (endX, endY) => {
+        if (!isTracking) {
+            return;
+        }
+        isTracking = false;
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+            return;
+        }
+        stepProductGallery(deltaX < 0 ? 1 : -1);
+    };
+
+    if ('PointerEvent' in window) {
+        productModalElements.gallery.addEventListener('pointerdown', (event) => {
+            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
+                return;
+            }
+            startX = event.clientX;
+            startY = event.clientY;
+            isTracking = true;
+        });
+
+        productModalElements.gallery.addEventListener('pointerup', (event) => {
+            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
+                return;
+            }
+            handleSwipeEnd(event.clientX, event.clientY);
+        });
+
+        productModalElements.gallery.addEventListener('pointercancel', () => {
+            isTracking = false;
+        });
+    } else {
+        productModalElements.gallery.addEventListener('touchstart', (event) => {
+            if (event.touches.length !== 1) {
+                return;
+            }
+            const touch = event.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            isTracking = true;
+        }, { passive: true });
+
+        productModalElements.gallery.addEventListener('touchend', (event) => {
+            if (!event.changedTouches.length) {
+                return;
+            }
+            const touch = event.changedTouches[0];
+            handleSwipeEnd(touch.clientX, touch.clientY);
+        });
+
+        productModalElements.gallery.addEventListener('touchcancel', () => {
+            isTracking = false;
+        });
+    }
+
+    document.addEventListener('keydown', (event) => {
+        if (!productModal.classList.contains('is-open')) {
+            return;
+        }
+        if (event.key === 'Escape') {
+            closeProductModal();
+        }
+        if (event.key === 'ArrowLeft') {
+            stepProductGallery(-1);
+        }
+        if (event.key === 'ArrowRight') {
+            stepProductGallery(1);
+        }
+    });
+}
+
+function openProductModal(product) {
+    ensureProductModal();
+    closeSizeMenus();
+    productModalState.productId = product.id;
+    productModalState.productName = product.name;
+    productModalState.images = [product.image];
+    productModalState.index = 0;
+
+    productModalElements.title.textContent = product.name;
+    productModalElements.price.textContent = `£${product.price}`;
+    productModalElements.description.textContent = getProductDescription(product);
+    productModalElements.sizeSelect.innerHTML = '';
+    product.sizes.forEach((size) => {
+        const option = document.createElement('option');
+        option.value = size;
+        option.textContent = size;
+        productModalElements.sizeSelect.appendChild(option);
+    });
+    productModalElements.buyButton.onclick = () => {
+        const size = productModalElements.sizeSelect.value || product.sizes[0];
+        addToCart(product.id, product.name, product.price, size);
+    };
+
+    updateProductModalImage();
+
+    productModal.classList.add('is-open');
+    productModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('modal-open');
+
+    const candidates = buildGalleryCandidates(product);
+    loadGalleryImages(candidates).then((images) => {
+        if (!productModal.classList.contains('is-open') || productModalState.productId !== product.id) {
+            return;
+        }
+        productModalState.images = images.length ? images : [product.image];
+        productModalState.index = 0;
+        updateProductModalImage();
+    });
 }
 
 async function loadProducts() {
@@ -161,11 +415,24 @@ function populateGrid() {
         productCard.className = 'product-card';
 
         const image = document.createElement('img');
+        image.className = 'product-card-image';
         image.src = product.image;
         image.alt = product.name;
         image.onerror = function() {
             this.src = 'https://via.placeholder.com/250x200?text=No+Image';
         };
+        image.setAttribute('role', 'button');
+        image.setAttribute('tabindex', '0');
+        image.setAttribute('aria-label', `Open ${product.name} details`);
+        image.addEventListener('click', () => {
+            openProductModal(product);
+        });
+        image.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                openProductModal(product);
+            }
+        });
 
         const content = document.createElement('div');
         content.className = 'content';

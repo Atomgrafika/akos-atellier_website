@@ -107,7 +107,7 @@ function setProfileEditing(isEditing) {
     }
 
     profileForm.hidden = !isEditing;
-    profileView.hidden = isEditing;
+    profileView.hidden = false;
     editButton.hidden = isEditing;
     saveButton.hidden = !isEditing;
     cancelButton.hidden = !isEditing;
@@ -175,6 +175,7 @@ function initRegistration() {
 function initProfile() {
     const profile = readStorage(STORAGE_KEYS.profile, null);
     renderProfile(profile);
+    setProfileEditing(false);
 
     const editButton = document.getElementById('edit-profile');
     const cancelButton = document.getElementById('cancel-profile');
