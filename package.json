@@ -1,0 +1,11 @@
+{
+  "name": "clothing-website",
+  "version": "1.0.0",
+  "description": "A simple responsive clothing website",
+  "scripts": {
+    "dev": "serve"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

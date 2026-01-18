@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - Akos' Atelier</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="account-page logo-only">
+    <header>
+        <h1 class="site-logo">
+            <span class="logo-text inverted-text">Akos' Atelier</span>
+            <img class="logo-mark" src="images/AA_logo02.png" alt="Akos' Atelier">
+        </h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a class="nav-button" href="login.html">Login</a>
+        </nav>
+    </header>
+    <main class="account-main">
+        <section class="account-hero">
+            <div class="account-hero-copy">
+                <span class="account-pill">Registration</span>
+                <h2>Create Your Account</h2>
+                <p>Register your details to unlock parcel tracking and returns updates.</p>
+            </div>
+            <div class="account-hero-card">
+                <p class="account-hero-label">Testing Mode</p>
+                <p class="account-hero-value">Tmp registration queue</p>
+                <p class="account-hero-note">Registration data is stored locally and queued for the tmp folder.</p>
+            </div>
+        </section>
+
+        <section class="account-grid">
+            <article class="account-card account-card--wide" id="register">
+                <header class="account-card-header">
+                </header>
+                <p class="account-card-text">Use this form to collect registrations. If the API is running, entries will be added to the tmp folder for review.</p>
+                <form class="account-form" id="registration-form">
+                    <div class="account-field-row">
+                        <div class="account-field">
+                            <label for="reg-full-name">Full name</label>
+                            <input type="text" id="reg-full-name" name="fullName" required>
+                        </div>
+                        <div class="account-field">
+                            <label for="reg-email">Email</label>
+                            <input type="email" id="reg-email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="account-field-row">
+                        <div class="account-field">
+                            <label for="reg-phone">Phone</label>
+                            <input type="tel" id="reg-phone" name="phone">
+                        </div>
+                        <div class="account-field">
+                            <label for="reg-address">Address</label>
+                            <input type="text" id="reg-address" name="address" required>
+                        </div>
+                    </div>
+                    <div class="account-field-row">
+                        <div class="account-field">
+                            <label for="reg-city">City</label>
+                            <input type="text" id="reg-city" name="city" required>
+                        </div>
+                        <div class="account-field">
+                            <label for="reg-postcode">Postcode</label>
+                            <input type="text" id="reg-postcode" name="postcode" required>
+                        </div>
+                        <div class="account-field">
+                            <label for="reg-country">Country</label>
+                            <input type="text" id="reg-country" name="country" required>
+                        </div>
+                    </div>
+                    <div class="account-actions">
+                        <button class="account-button" type="submit">Save registration</button>
+                        <span class="account-status" id="registration-status" aria-live="polite"></span>
+                    </div>
+                </form>
+            </article>
+        </section>
+    </main>
+    <script src="js/header.js"></script>
+    <script src="js/account.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account - Akos' Atelier</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="account-page logo-only">
+    <header>
+        <h1 class="site-logo">
+            <span class="logo-text inverted-text">Akos' Atelier</span>
+            <img class="logo-mark" src="images/AA_logo02.png" alt="Akos' Atelier">
+        </h1>
+        <nav>
+            <a href="index.html">Home</a>
+        </nav>
+    </header>
+    <main class="account-main">
+        <section class="account-hero">
+            <div class="account-hero-copy">
+                <h2 id="account-title">Your Account</h2>
+                <p>Keep your details in sync, add tracking numbers, and manage returns in one place.</p>
+            </div>
+            <div class="account-hero-card">
+                <p class="account-hero-label">Account Status</p>
+                <p class="account-hero-value" id="account-last-updated">No updates yet</p>
+                <p class="account-hero-note">Manage your details and keep tracking numbers up to date.</p>
+            </div>
+        </section>
+
+        <section class="account-grid">
+            <article class="account-card">
+                <header class="account-card-header">
+                </header>
+                <div class="profile-display" data-profile-view>
+                    <ul class="profile-list">
+                        <li><span>Full name</span><strong data-field="fullName">Not set</strong></li>
+                        <li><span>Email</span><strong data-field="email">Not set</strong></li>
+                        <li><span>Phone</span><strong data-field="phone">Not set</strong></li>
+                        <li><span>Address</span><strong data-field="address">Not set</strong></li>
+                        <li><span>City</span><strong data-field="city">Not set</strong></li>
+                        <li><span>Postcode</span><strong data-field="postcode">Not set</strong></li>
+                        <li><span>Country</span><strong data-field="country">Not set</strong></li>
+                    </ul>
+                </div>
+                <form class="account-form" id="profile-form" hidden>
+                    <div class="account-field">
+                        <label for="profile-full-name">Full name</label>
+                        <input type="text" id="profile-full-name" name="fullName" required>
+                    </div>
+                    <div class="account-field">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" name="email" required>
+                    </div>
+                    <div class="account-field">
+                        <label for="profile-phone">Phone</label>
+                        <input type="tel" id="profile-phone" name="phone">
+                    </div>
+                    <div class="account-field">
+                        <label for="profile-address">Address</label>
+                        <input type="text" id="profile-address" name="address" required>
+                    </div>
+                    <div class="account-field-row">
+                        <div class="account-field">
+                            <label for="profile-city">City</label>
+                            <input type="text" id="profile-city" name="city" required>
+                        </div>
+                        <div class="account-field">
+                            <label for="profile-postcode">Postcode</label>
+                            <input type="text" id="profile-postcode" name="postcode" required>
+                        </div>
+                    </div>
+                    <div class="account-field">
+                        <label for="profile-country">Country</label>
+                        <input type="text" id="profile-country" name="country" required>
+                    </div>
+                </form>
+                <div class="account-actions">
+                    <button class="account-button account-button--ghost" type="button" id="edit-profile">Edit details</button>
+                    <button class="account-button" type="submit" form="profile-form" id="save-profile" hidden>Save changes</button>
+                    <button class="account-button account-button--danger" type="button" id="delete-profile">Delete account</button>
+                    <button class="account-button account-button--ghost" type="button" id="cancel-profile" hidden>Cancel</button>
+                    <span class="account-status" id="profile-status" aria-live="polite"></span>
+                </div>
+            </article>
+
+            <article class="account-card account-card--wide">
+                <header class="account-card-header">
+                </header>
+                <div class="tracking-grid">
+                    <div class="tracking-column">
+                        <h4>Outgoing parcels</h4>
+                        <p class="account-card-text">Add tracking details once your parcel is sent out.</p>
+                        <ul class="tracking-list" id="shipment-list"></ul>
+                        <form class="account-form account-form--compact" id="shipment-form">
+                            <div class="account-field">
+                                <label for="shipment-carrier">Carrier</label>
+                                <select id="shipment-carrier" name="carrier" required>
+                                    <option value="royalmail">Royal Mail</option>
+                                    <option value="dpd">DPD</option>
+                                    <option value="dhl">DHL</option>
+                                </select>
+                            </div>
+                            <div class="account-field">
+                                <label for="shipment-tracking">Tracking number</label>
+                                <input type="text" id="shipment-tracking" name="trackingNumber" required>
+                            </div>
+                            <div class="account-actions">
+                                <button class="account-button" type="submit">Add parcel</button>
+                                <span class="account-status" id="shipment-status" aria-live="polite"></span>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tracking-column">
+                        <h4>Returns</h4>
+                        <p class="account-card-text">Log return tracking numbers for your records.</p>
+                        <ul class="tracking-list" id="return-list"></ul>
+                        <form class="account-form account-form--compact" id="return-form">
+                            <div class="account-field">
+                                <label for="return-carrier">Carrier</label>
+                                <select id="return-carrier" name="carrier" required>
+                                    <option value="royalmail">Royal Mail</option>
+                                    <option value="dpd">DPD</option>
+                                    <option value="dhl">DHL</option>
+                                </select>
+                            </div>
+                            <div class="account-field">
+                                <label for="return-tracking">Tracking number</label>
+                                <input type="text" id="return-tracking" name="trackingNumber" required>
+                            </div>
+                            <div class="account-actions">
+                                <button class="account-button" type="submit">Add return</button>
+                                <span class="account-status" id="return-status" aria-live="polite"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+    <script src="js/header.js"></script>
+    <script src="js/account.js"></script>
+</body>
+</html>

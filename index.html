@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clothing Website</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1 class="site-logo">
+            <span class="logo-text inverted-text">Akos' Atelier</span>
+            <img class="logo-mark" src="images/AA_logo02.png" alt="Akos' Atelier">
+        </h1>
+        <nav>
+            <a class="nav-button" href="login.html">Login</a>
+            <a class="nav-button" href="account.html">Account</a>
+            <button id="cart-button">Cart (0)</button>
+        </nav>
+    </header>
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2 id="product-name">Wearable Art T-Shirt - Design 1</h2>
+                <p id="product-material" class="product-material">Polyester 30% Cotton 70%</p>
+                <p id="product-price" class="product-price">£16</p>
+                <select id="size-select">
+                    <option value="S">S</option>
+                    <option value="M">M</option>
+                    <option value="L">L</option>
+                    <option value="XL">XL</option>
+                </select>
+                <button id="buy-button">Buy 🛒</button>
+            </div>
+            <div id="left-arrow" class="arrow">&lt;</div>
+            <div id="right-arrow" class="arrow">&gt;</div>
+            <div class="hero-thumbnails" id="hero-thumbnails" role="list" aria-label="Other products"></div>
+        </section>
+        <section class="product-grid" id="product-grid">
+            <!-- Product cards will be populated here -->
+        </section>
+    </main>
+    <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will be populated here -->
+            </div>
+            <p>Total: £<span id="cart-total">0.00</span></p>
+            <button id="checkout-button">Checkout</button>
+        </div>
+    </div>
+    <script src="js/header.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
