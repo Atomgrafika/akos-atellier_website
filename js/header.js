@@ -8,6 +8,55 @@
         body.classList.toggle('logo-swapped', window.scrollY > 12);
     };
 
+    const initNavToggle = () => {
+        const header = document.querySelector('header');
+        const toggle = document.querySelector('.nav-toggle');
+        if (!header || !toggle) {
+            return;
+        }
+
+        const navId = toggle.getAttribute('aria-controls');
+        const nav = navId ? document.getElementById(navId) : null;
+        if (!nav) {
+            return;
+        }
+
+        const setExpanded = (isOpen) => {
+            toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            header.classList.toggle('nav-open', isOpen);
+        };
+
+        toggle.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+            setExpanded(!isOpen);
+        });
+
+        nav.addEventListener('click', (event) => {
+            if (event.target.closest('a, button')) {
+                setExpanded(false);
+            }
+        });
+
+        document.addEventListener('click', (event) => {
+            if (!header.contains(event.target)) {
+                setExpanded(false);
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                setExpanded(false);
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                setExpanded(false);
+            }
+        });
+    };
+
     const initWaveBackground = () => {
         if (document.getElementById('wave-bg')) {
             return;
@@ -103,5 +152,6 @@
 
     toggleLogo();
     window.addEventListener('scroll', toggleLogo, { passive: true });
+    initNavToggle();
     initWaveBackground();
 })();

@@ -106,6 +106,31 @@ header nav a {
     text-transform: uppercase;
 }
 
+.nav-shell {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: auto;
+    position: relative;
+}
+
+.nav-toggle {
+    display: none;
+    background-color: #111;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.nav-toggle-bar {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background-color: #f7f1e8;
+    margin: 3px 0;
+}
+
 header nav a.nav-button,
 #cart-button {
     background-color: #111;
@@ -125,6 +150,45 @@ header nav a.nav-button:hover,
     color: #111;
 }
 
+@media (max-width: 768px) {
+    .logo-text {
+        font-size: 0.75em;
+    }
+
+    .nav-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    header nav {
+        position: absolute;
+        top: calc(100% + 0.6rem);
+        right: 0;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background-color: rgba(17, 17, 17, 0.95);
+        border-radius: 12px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        min-width: 190px;
+    }
+
+    header.nav-open nav {
+        display: flex;
+    }
+
+    header nav a {
+        color: #f7f1e8;
+    }
+
+    header nav a.nav-button,
+    #cart-button {
+        width: 100%;
+        text-align: left;
+    }
+}
 
 /* Hero section */
 #hero {
