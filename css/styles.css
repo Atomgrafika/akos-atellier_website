@@ -1081,6 +1081,6 @@ header nav a.nav-button:hover,
     }
 
     .hero-content {
-        margin-bottom: 2rem;
+        margin-bottom: -2rem;
     }
 }
