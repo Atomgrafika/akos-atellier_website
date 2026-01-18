@@ -1251,6 +1251,10 @@ body.modal-open {
         padding-bottom: clamp(5rem, 16vw, 16rem);
     }
 
+    .arrow {
+        display: none !important;
+    }
+
     .hero-thumbnails {
         display: none;
     }

@@ -567,15 +567,18 @@ function initHeroSwipe() {
         isTracking = false;
         const deltaX = endX - startX;
         const deltaY = endY - startY;
+        const useVertical = window.matchMedia('(max-width: 768px)').matches;
+        const primaryDelta = useVertical ? deltaY : deltaX;
+        const secondaryDelta = useVertical ? deltaX : deltaY;
 
-        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+        if (Math.abs(primaryDelta) < 50 || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
             return;
         }
         if (!products.length) {
             return;
         }
 
-        if (deltaX < 0) {
+        if (primaryDelta < 0) {
             currentProductIndex = (currentProductIndex + 1) % products.length;
         } else {
             currentProductIndex = (currentProductIndex - 1 + products.length) % products.length;
