@@ -1,4 +1,4 @@
-# Ákos Atelier - Wearable Art
+# Akos' Atelier - Hand crafted wearable art
 
 A simple responsive website for Ákos Nemes' wearable art clothing.
 
