@@ -1073,7 +1073,7 @@ header nav a.nav-button:hover,
     #hero {
         touch-action: pan-y;
         align-items: flex-end;
-        padding-bottom: clamp(5rem, 16vw, 16rem);
+        padding-bottom: clamp(10rem, 32vw, 32rem);
     }
 
     .hero-thumbnails {
