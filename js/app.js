@@ -172,26 +172,15 @@ function initHeroSwipe() {
 
     let startX = 0;
     let startY = 0;
-    let isTouching = false;
+    let isTracking = false;
 
-    hero.addEventListener('touchstart', (event) => {
-        if (event.touches.length !== 1) {
+    const handleSwipeEnd = (endX, endY) => {
+        if (!isTracking) {
             return;
         }
-        const touch = event.touches[0];
-        startX = touch.clientX;
-        startY = touch.clientY;
-        isTouching = true;
-    }, { passive: true });
-
-    hero.addEventListener('touchend', (event) => {
-        if (!isTouching || !event.changedTouches.length) {
-            return;
-        }
-        const touch = event.changedTouches[0];
-        const deltaX = touch.clientX - startX;
-        const deltaY = touch.clientY - startY;
-        isTouching = false;
+        isTracking = false;
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
 
         if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
             return;
@@ -206,11 +195,51 @@ function initHeroSwipe() {
             currentProductIndex = (currentProductIndex - 1 + products.length) % products.length;
         }
         updateHero();
-    });
+    };
 
-    hero.addEventListener('touchcancel', () => {
-        isTouching = false;
-    });
+    if ('PointerEvent' in window) {
+        hero.addEventListener('pointerdown', (event) => {
+            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
+                return;
+            }
+            startX = event.clientX;
+            startY = event.clientY;
+            isTracking = true;
+        });
+
+        hero.addEventListener('pointerup', (event) => {
+            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
+                return;
+            }
+            handleSwipeEnd(event.clientX, event.clientY);
+        });
+
+        hero.addEventListener('pointercancel', () => {
+            isTracking = false;
+        });
+    } else {
+        hero.addEventListener('touchstart', (event) => {
+            if (event.touches.length !== 1) {
+                return;
+            }
+            const touch = event.touches[0];
+            startX = touch.clientX;
+            startY = touch.clientY;
+            isTracking = true;
+        }, { passive: true });
+
+        hero.addEventListener('touchend', (event) => {
+            if (!event.changedTouches.length) {
+                return;
+            }
+            const touch = event.changedTouches[0];
+            handleSwipeEnd(touch.clientX, touch.clientY);
+        });
+
+        hero.addEventListener('touchcancel', () => {
+            isTracking = false;
+        });
+    }
 }
 
 // Modal functionality

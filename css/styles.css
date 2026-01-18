@@ -985,3 +985,13 @@ header nav a.nav-button:hover,
         text-align: left;
     }
 }
+
+@media (max-width: 768px) {
+    #hero {
+        touch-action: pan-y;
+    }
+
+    .hero-thumbnails {
+        display: none;
+    }
+}
