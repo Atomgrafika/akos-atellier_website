@@ -176,7 +176,7 @@ function ensureProductModal() {
         isTracking = false;
         const deltaX = endX - startX;
         const deltaY = endY - startY;
-        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+        if (Math.abs(deltaX) < 25 || Math.abs(deltaX) < Math.abs(deltaY)) {
             return;
         }
         stepProductGallery(deltaX < 0 ? 1 : -1);
