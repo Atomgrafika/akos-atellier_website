@@ -71,8 +71,8 @@
                             context.lineTo(x, y);
                         }
                     }
-                    const alpha = 0.06 + index * 0.006;
-                    context.strokeStyle = `rgba(50, 35, 35, ${alpha.toFixed(3)})`;
+                    const alpha = 0.1;
+                    context.strokeStyle = `rgba(50, 35, 35, ${alpha})`;
                     context.lineWidth = 2;
                     context.stroke();
                 };
