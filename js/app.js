@@ -122,8 +122,8 @@ function ensureProductModal() {
     productModal.setAttribute('aria-hidden', 'true');
     productModal.innerHTML = `
         <div class="product-modal-content" role="dialog" aria-modal="true" aria-label="Product details">
-            <button class="product-modal-close" type="button" aria-label="Close">×</button>
             <div class="product-modal-gallery">
+                <button class="product-modal-close" type="button" aria-label="Close">×</button>
                 <button class="product-modal-arrow product-modal-arrow--prev" type="button" aria-label="Previous image">‹</button>
                 <img class="product-modal-image" alt="">
                 <button class="product-modal-arrow product-modal-arrow--next" type="button" aria-label="Next image">›</button>
