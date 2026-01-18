@@ -472,6 +472,33 @@ header nav a.nav-button:hover,
     color: #111;
 }
 
+.product-card .size-menu {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.product-card .size-menu[hidden] {
+    display: none;
+}
+
+.product-card .size-option {
+    flex: 1 1 44px;
+    background-color: rgba(17, 17, 17, 0.9);
+    color: #f7f1e8;
+    border: 1px solid rgba(247, 241, 232, 0.2);
+    padding: 0.35rem 0.5rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+.product-card .size-option:hover {
+    background-color: #c9b89a;
+    color: #111;
+}
+
 /* Modal */
 .modal {
     display: none;
@@ -493,6 +520,65 @@ header nav a.nav-button:hover,
     width: 80%;
     max-width: 500px;
     border-radius: 8px;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cart-item:last-child {
+    border-bottom: none;
+}
+
+.cart-item-info {
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.cart-remove {
+    background: #111;
+    color: #f7f1e8;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-remove:hover {
+    background-color: #c9b89a;
+    color: #111;
+}
+
+#cart-toast {
+    position: fixed;
+    left: 50%;
+    bottom: 2rem;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(17, 17, 17, 0.92);
+    color: #f7f1e8;
+    padding: 0.65rem 1.2rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1100;
+}
+
+#cart-toast.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
 }
 
 .close {
@@ -986,9 +1072,15 @@ header nav a.nav-button:hover,
 @media (max-width: 768px) {
     #hero {
         touch-action: pan-y;
+        align-items: flex-end;
+        padding-bottom: clamp(2.5rem, 8vw, 4rem);
     }
 
     .hero-thumbnails {
         display: none;
+    }
+
+    .hero-content {
+        margin-bottom: 0;
     }
 }

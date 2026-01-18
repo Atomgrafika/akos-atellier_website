@@ -10,6 +10,24 @@ function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
 }
 
+function showCartToast(productName) {
+    const name = productName || 'Product';
+    let toast = document.getElementById('cart-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'cart-toast';
+        toast.setAttribute('role', 'status');
+        toast.setAttribute('aria-live', 'polite');
+        document.body.appendChild(toast);
+    }
+    toast.textContent = `${name} is added to the basket.`;
+    toast.classList.add('is-visible');
+    window.clearTimeout(showCartToast.hideTimer);
+    showCartToast.hideTimer = window.setTimeout(() => {
+        toast.classList.remove('is-visible');
+    }, 2200);
+}
+
 async function loadProducts() {
     try {
         const response = await fetch('data/products.json');
@@ -118,6 +136,19 @@ function getMaterialDescription(product) {
     return 'Polyester 30% Cotton 70%';
 }
 
+function closeSizeMenus(exceptId) {
+    document.querySelectorAll('.size-menu').forEach((menu) => {
+        if (exceptId && menu.id === exceptId) {
+            return;
+        }
+        menu.hidden = true;
+        const button = menu.closest('.product-card')?.querySelector('.buy-button');
+        if (button) {
+            button.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+
 // Populate product grid
 function populateGrid() {
     const productGrid = document.getElementById('product-grid');
@@ -125,15 +156,69 @@ function populateGrid() {
     products.forEach(product => {
         const productCard = document.createElement('div');
         productCard.className = 'product-card';
-        productCard.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/250x200?text=No+Image'">
-            <div class="content">
-                <h3>${product.name}</h3>
-                <p class="product-material">${getMaterialDescription(product)}</p>
-                <p class="product-price">£${product.price}</p>
-                <button onclick="addToCart(${product.id}, '${product.name}', ${product.price}, '${product.sizes[0]}')">Buy 🛒</button>
-            </div>
-        `;
+
+        const image = document.createElement('img');
+        image.src = product.image;
+        image.alt = product.name;
+        image.onerror = function() {
+            this.src = 'https://via.placeholder.com/250x200?text=No+Image';
+        };
+
+        const content = document.createElement('div');
+        content.className = 'content';
+
+        const title = document.createElement('h3');
+        title.textContent = product.name;
+
+        const material = document.createElement('p');
+        material.className = 'product-material';
+        material.textContent = getMaterialDescription(product);
+
+        const price = document.createElement('p');
+        price.className = 'product-price';
+        price.textContent = `£${product.price}`;
+
+        const buyButton = document.createElement('button');
+        buyButton.type = 'button';
+        buyButton.className = 'buy-button';
+        buyButton.textContent = 'Buy';
+        buyButton.setAttribute('aria-expanded', 'false');
+
+        const sizeMenu = document.createElement('div');
+        sizeMenu.className = 'size-menu';
+        sizeMenu.hidden = true;
+        sizeMenu.id = `size-menu-${product.id}`;
+        buyButton.setAttribute('aria-controls', sizeMenu.id);
+
+        product.sizes.forEach((size) => {
+            const sizeButton = document.createElement('button');
+            sizeButton.type = 'button';
+            sizeButton.className = 'size-option';
+            sizeButton.textContent = size;
+            sizeButton.addEventListener('click', () => {
+                addToCart(product.id, product.name, product.price, size);
+                sizeMenu.hidden = true;
+                buyButton.setAttribute('aria-expanded', 'false');
+            });
+            sizeMenu.appendChild(sizeButton);
+        });
+
+        buyButton.addEventListener('click', (event) => {
+            event.stopPropagation();
+            const isOpen = !sizeMenu.hidden;
+            closeSizeMenus(sizeMenu.id);
+            sizeMenu.hidden = isOpen;
+            buyButton.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+        });
+
+        content.appendChild(title);
+        content.appendChild(material);
+        content.appendChild(price);
+        content.appendChild(buyButton);
+        content.appendChild(sizeMenu);
+
+        productCard.appendChild(image);
+        productCard.appendChild(content);
         productGrid.appendChild(productCard);
     });
 }
@@ -143,6 +228,7 @@ function addToCart(id, name, price, size) {
     cartTotal += price;
     updateCartButton();
     saveCart();
+    showCartToast(name);
 }
 
 function updateCartButton() {
@@ -157,11 +243,39 @@ function updateCartModal() {
     cartItems.innerHTML = '';
     cart.forEach((item, index) => {
         const itemElement = document.createElement('div');
-        itemElement.textContent = `${item.name} - Size: ${item.size} - £${item.price.toFixed(2)}`;
+        itemElement.className = 'cart-item';
+
+        const info = document.createElement('span');
+        info.className = 'cart-item-info';
+        info.textContent = `${item.name} - Size: ${item.size} - £${item.price.toFixed(2)}`;
+
+        const removeButton = document.createElement('button');
+        removeButton.type = 'button';
+        removeButton.className = 'cart-remove';
+        removeButton.setAttribute('aria-label', `Remove ${item.name}`);
+        removeButton.textContent = '×';
+        removeButton.addEventListener('click', () => {
+            removeFromCart(index);
+        });
+
+        itemElement.appendChild(info);
+        itemElement.appendChild(removeButton);
         cartItems.appendChild(itemElement);
     });
 
     cartTotalElement.textContent = cartTotal.toFixed(2);
+}
+
+function removeFromCart(index) {
+    const item = cart[index];
+    if (!item) {
+        return;
+    }
+    cart.splice(index, 1);
+    cartTotal = cart.reduce((sum, entry) => sum + entry.price, 0);
+    updateCartButton();
+    saveCart();
+    updateCartModal();
 }
 
 function initHeroSwipe() {
@@ -307,4 +421,9 @@ rightArrow.onclick = function() {
 document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
     initHeroSwipe();
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.product-card')) {
+            closeSizeMenus();
+        }
+    });
 });
