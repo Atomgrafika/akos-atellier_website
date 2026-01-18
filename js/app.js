@@ -551,51 +551,53 @@ function initHeroSwipe() {
         return;
     }
 
+    const isMobileView = () => window.matchMedia('(max-width: 768px)').matches;
+
     let startX = 0;
     let startY = 0;
     let isTracking = false;
+    let hasSwiped = false;
 
-    const handleSwipeEnd = (endX, endY) => {
-        if (!isTracking) {
+    const trySwipe = (deltaX, deltaY) => {
+        if (!isMobileView() || hasSwiped) {
             return;
         }
-        isTracking = false;
-        const deltaX = endX - startX;
-        const deltaY = endY - startY;
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        const primaryDelta = isMobile ? deltaX : deltaY;
-        const secondaryDelta = isMobile ? deltaY : deltaX;
-
-        if (!isMobile || Math.abs(primaryDelta) < 50 || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
+        if (Math.abs(deltaX) < 30 || Math.abs(deltaX) < Math.abs(deltaY) * 1.1) {
             return;
         }
         if (!products.length) {
             return;
         }
-
-        if (primaryDelta < 0) {
-            currentProductIndex = (currentProductIndex + 1) % products.length;
-        } else {
-            currentProductIndex = (currentProductIndex - 1 + products.length) % products.length;
-        }
+        hasSwiped = true;
+        currentProductIndex = deltaX < 0
+            ? (currentProductIndex + 1) % products.length
+            : (currentProductIndex - 1 + products.length) % products.length;
         updateHero();
     };
 
     if ('PointerEvent' in window) {
         hero.addEventListener('pointerdown', (event) => {
+            if (!isMobileView()) {
+                return;
+            }
             if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
                 return;
             }
             startX = event.clientX;
             startY = event.clientY;
             isTracking = true;
+            hasSwiped = false;
         });
 
-        hero.addEventListener('pointerup', (event) => {
-            if (event.pointerType !== 'touch' && event.pointerType !== 'pen') {
+        hero.addEventListener('pointermove', (event) => {
+            if (!isTracking || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) {
                 return;
             }
-            handleSwipeEnd(event.clientX, event.clientY);
+            trySwipe(event.clientX - startX, event.clientY - startY);
+        });
+
+        hero.addEventListener('pointerup', () => {
+            isTracking = false;
         });
 
         hero.addEventListener('pointercancel', () => {
@@ -603,6 +605,9 @@ function initHeroSwipe() {
         });
     } else {
         hero.addEventListener('touchstart', (event) => {
+            if (!isMobileView()) {
+                return;
+            }
             if (event.touches.length !== 1) {
                 return;
             }
@@ -610,14 +615,19 @@ function initHeroSwipe() {
             startX = touch.clientX;
             startY = touch.clientY;
             isTracking = true;
+            hasSwiped = false;
         }, { passive: true });
 
-        hero.addEventListener('touchend', (event) => {
-            if (!event.changedTouches.length) {
+        hero.addEventListener('touchmove', (event) => {
+            if (!isTracking || !event.touches.length) {
                 return;
             }
-            const touch = event.changedTouches[0];
-            handleSwipeEnd(touch.clientX, touch.clientY);
+            const touch = event.touches[0];
+            trySwipe(touch.clientX - startX, touch.clientY - startY);
+        }, { passive: true });
+
+        hero.addEventListener('touchend', () => {
+            isTracking = false;
         });
 
         hero.addEventListener('touchcancel', () => {
