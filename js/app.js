@@ -164,6 +164,55 @@ function updateCartModal() {
     cartTotalElement.textContent = cartTotal.toFixed(2);
 }
 
+function initHeroSwipe() {
+    const hero = document.getElementById('hero');
+    if (!hero) {
+        return;
+    }
+
+    let startX = 0;
+    let startY = 0;
+    let isTouching = false;
+
+    hero.addEventListener('touchstart', (event) => {
+        if (event.touches.length !== 1) {
+            return;
+        }
+        const touch = event.touches[0];
+        startX = touch.clientX;
+        startY = touch.clientY;
+        isTouching = true;
+    }, { passive: true });
+
+    hero.addEventListener('touchend', (event) => {
+        if (!isTouching || !event.changedTouches.length) {
+            return;
+        }
+        const touch = event.changedTouches[0];
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+        isTouching = false;
+
+        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+            return;
+        }
+        if (!products.length) {
+            return;
+        }
+
+        if (deltaX < 0) {
+            currentProductIndex = (currentProductIndex + 1) % products.length;
+        } else {
+            currentProductIndex = (currentProductIndex - 1 + products.length) % products.length;
+        }
+        updateHero();
+    });
+
+    hero.addEventListener('touchcancel', () => {
+        isTouching = false;
+    });
+}
+
 // Modal functionality
 const modal = document.getElementById('cart-modal');
 const cartButton = document.getElementById('cart-button');
@@ -226,4 +275,7 @@ rightArrow.onclick = function() {
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', loadProducts);
+document.addEventListener('DOMContentLoaded', () => {
+    loadProducts();
+    initHeroSwipe();
+});
