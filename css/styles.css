@@ -231,6 +231,21 @@ header nav a.nav-button:hover,
     padding: 0 clamp(1.5rem, 6vw, 5rem);
 }
 
+.hero-bg-layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: 0;
+    pointer-events: none;
+    transition: transform 0.35s ease;
+}
+
+.hero-bg-layer--next {
+    transform: translateX(100%);
+}
+
 .hero-content {
     text-align: left;
     background: rgba(12, 12, 14, 0.55);

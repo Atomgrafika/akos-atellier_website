@@ -13,6 +13,9 @@ const productModalState = {
     images: [],
     index: 0
 };
+const heroState = {
+    isAnimating: false
+};
 
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -302,7 +305,24 @@ function updateHero() {
     }
     const product = products[currentProductIndex];
     const hero = document.getElementById('hero');
-    hero.style.backgroundImage = `url(${product.image})`;
+    setHeroBackground(hero, product.image);
+    setHeroContent(product);
+}
+
+function setHeroBackground(hero, image) {
+    if (!hero) {
+        return;
+    }
+    ensureHeroLayers(hero);
+    const currentLayer = hero.querySelector('.hero-bg-layer--current');
+    if (currentLayer) {
+        currentLayer.style.backgroundImage = `url(${image})`;
+        return;
+    }
+    hero.style.backgroundImage = `url(${image})`;
+}
+
+function setHeroContent(product) {
     document.getElementById('product-name').textContent = product.name;
     const materialElement = document.getElementById('product-material');
     if (materialElement) {
@@ -318,6 +338,66 @@ function updateHero() {
         sizeSelect.appendChild(option);
     });
     updateHeroThumbs();
+}
+
+function ensureHeroLayers(hero) {
+    if (!hero || hero.querySelector('.hero-bg-layer--current')) {
+        return;
+    }
+    const current = document.createElement('div');
+    current.className = 'hero-bg-layer hero-bg-layer--current';
+    const next = document.createElement('div');
+    next.className = 'hero-bg-layer hero-bg-layer--next';
+    hero.prepend(next);
+    hero.prepend(current);
+    hero.style.backgroundImage = 'none';
+}
+
+function animateHeroTransition(direction, product) {
+    const hero = document.getElementById('hero');
+    if (!hero || heroState.isAnimating) {
+        return;
+    }
+    heroState.isAnimating = true;
+    ensureHeroLayers(hero);
+
+    const currentLayer = hero.querySelector('.hero-bg-layer--current');
+    const nextLayer = hero.querySelector('.hero-bg-layer--next');
+    if (!currentLayer || !nextLayer) {
+        heroState.isAnimating = false;
+        setHeroBackground(hero, product.image);
+        setHeroContent(product);
+        return;
+    }
+
+    nextLayer.style.transition = 'none';
+    currentLayer.style.transition = 'none';
+    nextLayer.style.backgroundImage = `url(${product.image})`;
+
+    const enterFrom = direction === 'next' ? '100%' : '-100%';
+    const exitTo = direction === 'next' ? '-100%' : '100%';
+    nextLayer.style.transform = `translateX(${enterFrom})`;
+    currentLayer.style.transform = 'translateX(0)';
+
+    requestAnimationFrame(() => {
+        nextLayer.style.transition = '';
+        currentLayer.style.transition = '';
+        nextLayer.style.transform = 'translateX(0)';
+        currentLayer.style.transform = `translateX(${exitTo})`;
+    });
+
+    const onDone = () => {
+        nextLayer.removeEventListener('transitionend', onDone);
+        currentLayer.style.transition = 'none';
+        nextLayer.style.transition = 'none';
+        currentLayer.style.backgroundImage = `url(${product.image})`;
+        currentLayer.style.transform = 'translateX(0)';
+        nextLayer.style.transform = `translateX(${enterFrom})`;
+        heroState.isAnimating = false;
+        setHeroContent(product);
+    };
+
+    nextLayer.addEventListener('transitionend', onDone);
 }
 
 function populateHeroThumbnails() {
@@ -561,16 +641,18 @@ function initHeroSwipe() {
         if (!isMobileView()) {
             return;
         }
-        if (Math.abs(deltaX) < 50 || Math.abs(deltaX) < Math.abs(deltaY)) {
+        if (Math.abs(deltaX) < 25 || Math.abs(deltaX) < Math.abs(deltaY)) {
             return;
         }
         if (!products.length) {
             return;
         }
-        currentProductIndex = deltaX < 0
+        const isNext = deltaX < 0;
+        const nextIndex = isNext
             ? (currentProductIndex + 1) % products.length
             : (currentProductIndex - 1 + products.length) % products.length;
-        updateHero();
+        currentProductIndex = nextIndex;
+        animateHeroTransition(isNext ? 'next' : 'prev', products[currentProductIndex]);
     };
 
     if ('PointerEvent' in window) {
