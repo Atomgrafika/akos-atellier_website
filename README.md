@@ -1,6 +1,6 @@
 # Akos' Atelier - Hand crafted wearable art
 
-A simple responsive website for Ákos Nemes' wearable art clothing.
+My name is Ákos and I vibe coded this website with Codex AI to sell my artwork on garments.
 
 ## Features
 
