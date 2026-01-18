@@ -562,11 +562,11 @@ function initHeroSwipe() {
         isTracking = false;
         const deltaX = endX - startX;
         const deltaY = endY - startY;
-        const useVertical = window.matchMedia('(max-width: 768px)').matches;
-        const primaryDelta = useVertical ? deltaY : deltaX;
-        const secondaryDelta = useVertical ? deltaX : deltaY;
+        const isMobile = window.matchMedia('(max-width: 768px)').matches;
+        const primaryDelta = isMobile ? deltaX : deltaY;
+        const secondaryDelta = isMobile ? deltaY : deltaX;
 
-        if (Math.abs(primaryDelta) < 50 || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
+        if (!isMobile || Math.abs(primaryDelta) < 50 || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
             return;
         }
         if (!products.length) {
