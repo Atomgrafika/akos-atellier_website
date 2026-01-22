@@ -1334,6 +1334,11 @@ body.modal-open {
         padding-bottom: clamp(5rem, 16vw, 16rem);
     }
 
+    #hero.hero--new-god,
+    #hero.hero--new-god .hero-bg-layer {
+        background-size: 70% auto;
+    }
+
     .arrow {
         display: none !important;
     }

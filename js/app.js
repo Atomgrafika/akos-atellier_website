@@ -319,8 +319,21 @@ function updateHero() {
     }
     const product = products[currentProductIndex];
     const hero = document.getElementById('hero');
+    setHeroProductState(hero, product);
     setHeroBackground(hero, getHeroBackgroundImage(product));
     setHeroContent(product);
+}
+
+function isNewGodProduct(product) {
+    return Boolean(product && typeof product.name === 'string'
+        && product.name.trim().toLowerCase() === 'new gods');
+}
+
+function setHeroProductState(hero, product) {
+    if (!hero) {
+        return;
+    }
+    hero.classList.toggle('hero--new-god', isNewGodProduct(product));
 }
 
 function setHeroBackground(hero, image) {
@@ -380,6 +393,7 @@ function animateHeroTransition(direction, product) {
     const nextLayer = hero.querySelector('.hero-bg-layer--next');
     if (!currentLayer || !nextLayer) {
         heroState.isAnimating = false;
+        setHeroProductState(hero, product);
         setHeroBackground(hero, heroImage);
         setHeroContent(product);
         return;
@@ -409,6 +423,7 @@ function animateHeroTransition(direction, product) {
         currentLayer.style.transform = 'translateX(0)';
         nextLayer.style.transform = `translateX(${enterFrom})`;
         heroState.isAnimating = false;
+        setHeroProductState(hero, product);
         setHeroContent(product);
     };
 
