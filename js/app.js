@@ -17,18 +17,25 @@ const heroState = {
     isAnimating: false
 };
 const heroDesktopQuery = window.matchMedia('(min-width: 769px)');
-const heroDesktopOverrides = {
-    'images/The_New_God.png': 'images/The_New_God_hero.png'
+const heroImageOverrides = {
+    'images/The_New_God.png': {
+        desktop: 'images/The_New_God_hero.png',
+        mobile: 'images/The_New_God_hero_mobile.png'
+    }
 };
 
 function getHeroBackgroundImage(product) {
     if (!product || !product.image) {
         return '';
     }
-    if (!heroDesktopQuery.matches) {
+    const override = heroImageOverrides[product.image];
+    if (!override) {
         return product.image;
     }
-    return heroDesktopOverrides[product.image] || product.image;
+    if (heroDesktopQuery.matches) {
+        return override.desktop || product.image;
+    }
+    return override.mobile || product.image;
 }
 
 function saveCart() {

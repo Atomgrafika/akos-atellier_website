@@ -163,7 +163,7 @@
         overlay.innerHTML = `
             <div class="welcome-card" role="document">
                 <h2>Hi my name is Akos, and welcome to my website.</h2>
-                <p>You can find garments and prints which is made by hand including the garments. The clothes are made by Colourways Textiles, a family business making quality clothes for three generations now.</p>
+                <p>You can find garments and prints here which is made by hand including the garments once the site is finnished. It is still under construction and please dont put your details in. This is still just in testing phase</p>
                 <p>For me privacy is very important which is reflected on the site and you're always in full control of your information.</p>
                 <p>If you have any question or enquiry please get in touch at akosatellier@proton.me</p>
                 <p class="welcome-signoff">Best,<br>Akos</p>
