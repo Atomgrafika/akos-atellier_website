@@ -16,6 +16,20 @@ const productModalState = {
 const heroState = {
     isAnimating: false
 };
+const heroDesktopQuery = window.matchMedia('(min-width: 769px)');
+const heroDesktopOverrides = {
+    'images/The_New_God.png': 'images/The_New_God_hero.png'
+};
+
+function getHeroBackgroundImage(product) {
+    if (!product || !product.image) {
+        return '';
+    }
+    if (!heroDesktopQuery.matches) {
+        return product.image;
+    }
+    return heroDesktopOverrides[product.image] || product.image;
+}
 
 function saveCart() {
     localStorage.setItem('cart', JSON.stringify(cart));
@@ -46,7 +60,7 @@ function getProductDescription(product) {
     if (product.type === 'hoodie') {
         return 'A heavyweight hoodie with a soft brushed interior, built for warmth and structure. The artwork is laid in with precise line work so the graphic stays crisp through everyday wear.';
     }
-    return 'A smooth cotton-blend tee with a clean drape and soft hand feel. The print is layered carefully for sharp detail and lasting color through repeated washes.';
+    return 'A smooth cotton-blend tee with a clean drape and soft hand feel. The print is layered carefully for sharp detail and lasting colour through repeated washes.';
 }
 
 function buildGalleryCandidates(product) {
@@ -305,7 +319,7 @@ function updateHero() {
     }
     const product = products[currentProductIndex];
     const hero = document.getElementById('hero');
-    setHeroBackground(hero, product.image);
+    setHeroBackground(hero, getHeroBackgroundImage(product));
     setHeroContent(product);
 }
 
@@ -360,19 +374,20 @@ function animateHeroTransition(direction, product) {
     }
     heroState.isAnimating = true;
     ensureHeroLayers(hero);
+    const heroImage = getHeroBackgroundImage(product);
 
     const currentLayer = hero.querySelector('.hero-bg-layer--current');
     const nextLayer = hero.querySelector('.hero-bg-layer--next');
     if (!currentLayer || !nextLayer) {
         heroState.isAnimating = false;
-        setHeroBackground(hero, product.image);
+        setHeroBackground(hero, heroImage);
         setHeroContent(product);
         return;
     }
 
     nextLayer.style.transition = 'none';
     currentLayer.style.transition = 'none';
-    nextLayer.style.backgroundImage = `url(${product.image})`;
+    nextLayer.style.backgroundImage = `url(${heroImage})`;
 
     const enterFrom = direction === 'next' ? '100%' : '-100%';
     const exitTo = direction === 'next' ? '-100%' : '100%';
@@ -390,7 +405,7 @@ function animateHeroTransition(direction, product) {
         nextLayer.removeEventListener('transitionend', onDone);
         currentLayer.style.transition = 'none';
         nextLayer.style.transition = 'none';
-        currentLayer.style.backgroundImage = `url(${product.image})`;
+        currentLayer.style.backgroundImage = `url(${heroImage})`;
         currentLayer.style.transform = 'translateX(0)';
         nextLayer.style.transform = `translateX(${enterFrom})`;
         heroState.isAnimating = false;
@@ -580,7 +595,7 @@ function addToCart(id, name, price, size) {
 
 function updateCartButton() {
     const cartButton = document.getElementById('cart-button');
-    cartButton.textContent = `Cart (${cart.length})`;
+    cartButton.textContent = `Basket (${cart.length})`;
 }
 
 function updateCartModal() {
@@ -773,6 +788,12 @@ rightArrow.onclick = function() {
 document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
     initHeroSwipe();
+    const handleHeroMediaChange = () => updateHero();
+    if (heroDesktopQuery.addEventListener) {
+        heroDesktopQuery.addEventListener('change', handleHeroMediaChange);
+    } else if (heroDesktopQuery.addListener) {
+        heroDesktopQuery.addListener(handleHeroMediaChange);
+    }
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.product-card')) {
             closeSizeMenus();

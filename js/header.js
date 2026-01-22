@@ -150,8 +150,58 @@
         }
     };
 
+    const initWelcomeCard = () => {
+        if (document.getElementById('welcome-overlay')) {
+            return;
+        }
+
+        const overlay = document.createElement('div');
+        overlay.id = 'welcome-overlay';
+        overlay.className = 'welcome-overlay';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.innerHTML = `
+            <div class="welcome-card" role="document">
+                <h2>Hi my name is Akos, and welcome to my website.</h2>
+                <p>You can find garments and prints which is made by hand including the garments. The clothes are made by Colourways Textiles, a family business making quality clothes for three generations now.</p>
+                <p>For me privacy is very important which is reflected on the site and you're always in full control of your information.</p>
+                <p>If you have any question or enquiry please get in touch at akosatellier@proton.me</p>
+                <p class="welcome-signoff">Best,<br>Akos</p>
+                <div class="welcome-actions">
+                    <button class="welcome-close" type="button">Close</button>
+                </div>
+            </div>
+        `;
+
+        const close = () => {
+            overlay.remove();
+            body.classList.remove('welcome-open');
+        };
+
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                close();
+            }
+        });
+
+        const closeButton = overlay.querySelector('.welcome-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', close);
+        }
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape' && document.getElementById('welcome-overlay')) {
+                close();
+            }
+        });
+
+        body.classList.add('welcome-open');
+        body.appendChild(overlay);
+    };
+
     toggleLogo();
     window.addEventListener('scroll', toggleLogo, { passive: true });
     initNavToggle();
     initWaveBackground();
+    initWelcomeCard();
 })();

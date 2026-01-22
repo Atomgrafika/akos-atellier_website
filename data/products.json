@@ -11,7 +11,7 @@
     "id": 2,
     "name": "New Gods",
     "price": 48,
-    "image": "images/Hoodie-black-01.jpeg",
+    "image": "images/The_New_God.png",
     "sizes": ["S", "M", "L", "XL"],
     "type": "hoodie"
   },
