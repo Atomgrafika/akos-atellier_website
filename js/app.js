@@ -18,6 +18,10 @@ const heroState = {
 };
 const heroDesktopQuery = window.matchMedia('(min-width: 769px)');
 const heroImageOverrides = {
+    'images/Confinement.png': {
+        desktop: 'images/Confinement_hero.png',
+        mobile: 'images/Confinement_hero_mobile.png'
+    },
     'images/The_New_God.png': {
         desktop: 'images/The_New_God_hero.png',
         mobile: 'images/The_New_God_hero_mobile.png'

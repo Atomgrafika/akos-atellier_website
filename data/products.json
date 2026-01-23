@@ -3,7 +3,7 @@
     "id": 1,
     "name": "Confinement",
     "price": 16,
-    "image": "images/T-Shirt-black-01.jpeg",
+    "image": "images/Confinement.png",
     "sizes": ["S", "M", "L", "XL"],
     "type": "shirt"
   },
