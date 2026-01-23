@@ -1331,12 +1331,13 @@ body.modal-open {
     #hero {
         touch-action: pan-y;
         align-items: flex-end;
+        padding-top: 2.5rem;
         padding-bottom: clamp(2.5rem, 8vw, 8rem);
     }
 
     #hero,
     #hero .hero-bg-layer {
-        background-size: 120% auto;
+        background-size: calc(100% - 5rem) auto;
     }
 
     .arrow {
