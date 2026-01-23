@@ -1330,13 +1330,13 @@ body.modal-open {
 @media (max-width: 768px) {
     #hero {
         touch-action: pan-y;
-        align-items: center;
-        padding-bottom: clamp(5rem, 16vw, 16rem);
+        align-items: flex-end;
+        padding-bottom: clamp(2.5rem, 8vw, 8rem);
     }
 
     #hero,
     #hero .hero-bg-layer {
-        background-size: 90% auto;
+        background-size: 95% auto;
     }
 
     .arrow {
