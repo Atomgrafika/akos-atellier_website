@@ -9,10 +9,14 @@ const db = require("./db");
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 
 const TMP_DIR = path.join(__dirname, "..", "tmp");
 const TMP_REGISTRATIONS_PATH = path.join(TMP_DIR, "registrations.json");
+const PRODUCTS_PATH = path.join(__dirname, "..", "data", "products.json");
+const BASE_URL = process.env.BASE_URL || "http://localhost:3000";
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const stripe = stripeSecretKey ? require("stripe")(stripeSecretKey) : null;
 
 function ensureTmpStorage() {
   if (!fs.existsSync(TMP_DIR)) {
@@ -37,6 +41,92 @@ function loadTmpRegistrations() {
 function saveTmpRegistrations(entries) {
   ensureTmpStorage();
   fs.writeFileSync(TMP_REGISTRATIONS_PATH, JSON.stringify(entries, null, 2), "utf8");
+}
+
+app.post("/api/stripe-webhook", express.raw({ type: "application/json" }), (req, res) => {
+  if (!stripe) {
+    return res.status(500).json({ error: "Stripe secret key not configured" });
+  }
+  if (!stripeWebhookSecret) {
+    return res.status(500).json({ error: "Stripe webhook secret not configured" });
+  }
+
+  const signature = req.headers["stripe-signature"];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, signature, stripeWebhookSecret);
+  } catch (error) {
+    console.error("Stripe webhook error:", error.message);
+    return res.status(400).send(`Webhook Error: ${error.message}`);
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    console.log("Checkout completed:", session.id);
+  }
+
+  return res.json({ received: true });
+});
+
+app.use(express.json());
+app.use("/server", (_req, res) => res.status(404).end());
+app.use("/tmp", (_req, res) => res.status(404).end());
+app.use(express.static(path.join(__dirname, "..")));
+
+function loadProducts() {
+  try {
+    const raw = fs.readFileSync(PRODUCTS_PATH, "utf8");
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Failed to load products:", error);
+    return [];
+  }
+}
+
+function buildLineItems(items) {
+  const products = loadProducts();
+  const productMap = new Map(products.map((product) => [String(product.id), product]));
+  const grouped = new Map();
+
+  items.forEach((item) => {
+    if (!item || (!item.id && item.id !== 0)) {
+      return;
+    }
+    const id = String(item.id);
+    const size = item.size ? String(item.size).toUpperCase() : "";
+    const quantity = Math.max(1, Number(item.quantity) || 1);
+    const key = `${id}:${size}`;
+    const entry = grouped.get(key) || { id, size, quantity: 0 };
+    entry.quantity += quantity;
+    grouped.set(key, entry);
+  });
+
+  const lineItems = [];
+  grouped.forEach((entry) => {
+    const product = productMap.get(entry.id);
+    if (!product) {
+      return;
+    }
+    const name = entry.size ? `${product.name} (${entry.size})` : product.name;
+    const unitAmount = Math.round(Number(product.price || 0) * 100);
+    if (!unitAmount) {
+      return;
+    }
+    lineItems.push({
+      price_data: {
+        currency: "gbp",
+        unit_amount: unitAmount,
+        product_data: {
+          name
+        }
+      },
+      quantity: entry.quantity
+    });
+  });
+
+  return lineItems;
 }
 
 // --- helper: auth middleware ---
@@ -107,6 +197,49 @@ app.post("/api/tmp-registrations", (req, res) => {
 app.get("/api/tmp-registrations", (_req, res) => {
   const entries = loadTmpRegistrations();
   return res.json(entries);
+});
+
+// --- STRIPE ---
+app.get("/api/stripe-key", (_req, res) => {
+  if (!process.env.STRIPE_PUBLISHABLE_KEY) {
+    return res.status(500).json({ error: "Stripe publishable key not configured" });
+  }
+  res.json({ publishableKey: process.env.STRIPE_PUBLISHABLE_KEY });
+});
+
+app.post("/api/create-checkout-session", async (req, res) => {
+  if (!stripe) {
+    return res.status(500).json({ error: "Stripe secret key not configured" });
+  }
+
+  const items = Array.isArray(req.body?.items) ? req.body.items : [];
+  const lineItems = buildLineItems(items);
+  if (!lineItems.length) {
+    return res.status(400).json({ error: "No valid items to checkout" });
+  }
+
+  const metadata = {};
+  const shipping = req.body?.shipping || {};
+  if (shipping.name) metadata.name = String(shipping.name);
+  if (shipping.address) metadata.address = String(shipping.address);
+  if (shipping.city) metadata.city = String(shipping.city);
+  if (shipping.postcode) metadata.postcode = String(shipping.postcode);
+  if (shipping.country) metadata.country = String(shipping.country);
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: lineItems,
+      success_url: `${BASE_URL}/checkout.html?success=1&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE_URL}/checkout.html?canceled=1`,
+      metadata
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Stripe session error:", error);
+    res.status(500).json({ error: "Unable to create Stripe session" });
+  }
 });
 
 // --- LIST PARCELS (private) ---

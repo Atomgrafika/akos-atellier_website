@@ -98,7 +98,19 @@ header h1 {
 }
 
 .inverted-text {
-    filter: invert(1);
+    color: #fff;
+    filter: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
 }
 
 header nav {
@@ -935,7 +947,7 @@ body.modal-open {
 .checkout-section {
     max-width: 600px;
     margin: 2rem auto;
-    padding: 2rem;
+    padding: 1.8rem 2rem;
     border: 1px solid #e9ecef;
     border-radius: 8px;
     background: #f8f9fa;
@@ -946,9 +958,52 @@ body.modal-open {
     margin-bottom: 1rem;
 }
 
+.checkout-status {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #1b1712;
+}
+
+.checkout-status[data-state="error"] {
+    color: #a03d2b;
+}
+
 .checkout-section h3 {
     margin-top: 2rem;
     margin-bottom: 1rem;
+}
+
+.checkout-toggle {
+    margin-top: 2rem;
+    padding: 0;
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+
+.checkout-collapsible {
+    margin-top: 1rem;
+    overflow: hidden;
+    opacity: 0;
+    max-height: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease;
+}
+
+.stripe-logo {
+    display: block;
+    width: 50%;
+    max-width: 180px;
+    height: auto;
+    margin: 0.75rem 0 1rem;
+}
+
+.checkout-collapsible.is-open {
+    opacity: 1;
 }
 
 .checkout-section form {
@@ -965,6 +1020,33 @@ body.modal-open {
     margin-top: 0.5rem;
 }
 
+.checkout-row {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.checkout-field {
+    flex: 1;
+}
+
+.checkout-input--card {
+    width: min(100%, 26ch);
+}
+
+.checkout-field--expiry {
+    flex: 0 0 8ch;
+}
+
+.checkout-field--cvv {
+    flex: 0 0 6ch;
+}
+
+.checkout-field input {
+    width: 100%;
+    margin-top: 0;
+}
+
 .checkout-section button {
     margin-top: 2rem;
     padding: 0.75rem;
@@ -978,6 +1060,51 @@ body.modal-open {
 .checkout-section button:hover {
     background-color: #c9b89a;
     color: #111;
+}
+
+.checkout-page {
+    background-color: #0d0d0d;
+    color: #f7f1e8;
+}
+
+.checkout-page .checkout-section {
+    background: #f8f9fa;
+    border-color: #e9ecef;
+    color: #333;
+}
+
+.checkout-page .checkout-section input {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ced4da;
+}
+
+.checkout-page .checkout-section input::placeholder {
+    color: rgba(51, 51, 51, 0.6);
+}
+
+.checkout-page .checkout-section button {
+    background-color: #111;
+    color: #f7f1e8;
+}
+
+.checkout-page .checkout-section button:hover {
+    background-color: #c9b89a;
+    color: #111;
+}
+
+.checkout-page header nav a.nav-button {
+    background-color: #f7f1e8;
+    color: #111;
+}
+
+.checkout-page header nav a.nav-button:hover {
+    background-color: #c9b89a;
+    color: #111;
+}
+
+.checkout-page .logo-mark {
+    filter: invert(1);
 }
 
 /* Account */

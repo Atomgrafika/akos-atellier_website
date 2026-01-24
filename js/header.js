@@ -73,6 +73,9 @@
         }
 
         const lineCount = 20;
+        const isCheckoutPage = body.classList.contains('checkout-page');
+        const waveAlpha = isCheckoutPage ? 1 : 0.1;
+        const waveColor = isCheckoutPage ? '255, 255, 255' : '50, 35, 35';
         const lines = Array.from({ length: lineCount }, (_, index) => {
             const offset = lineCount === 1 ? 0 : index / (lineCount - 1);
             return {
@@ -120,8 +123,7 @@
                             context.lineTo(x, y);
                         }
                     }
-                    const alpha = 0.1;
-                    context.strokeStyle = `rgba(50, 35, 35, ${alpha})`;
+                    context.strokeStyle = `rgba(${waveColor}, ${waveAlpha})`;
                     context.lineWidth = 2;
                     context.stroke();
                 };
