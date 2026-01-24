@@ -1337,7 +1337,7 @@ body.modal-open {
 
     #hero,
     #hero .hero-bg-layer {
-        background-size: calc(175% - 10rem) auto;
+        background-size: calc(160% - 10rem) auto;
         background-position: top center;
     }
 
