@@ -318,6 +318,33 @@ header nav a.nav-button:hover,
     background-color: #d6b38d;
 }
 
+#hero .size-menu {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+#hero .size-menu[hidden] {
+    display: none;
+}
+
+#hero .size-option {
+    flex: 1 1 44px;
+    background-color: rgba(17, 17, 17, 0.9);
+    color: #f7f1e8;
+    border: 1px solid rgba(247, 241, 232, 0.2);
+    padding: 0.35rem 0.5rem;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+#hero .size-option:hover {
+    background-color: #c9b89a;
+    color: #111;
+}
+
 #hero::before {
     content: "";
     position: absolute;

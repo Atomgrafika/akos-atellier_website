@@ -33,13 +33,8 @@
                 <h2 id="product-name">Wearable Art T-Shirt - Design 1</h2>
                 <p id="product-material" class="product-material">Polyester 30% Cotton 70%</p>
                 <p id="product-price" class="product-price">£16</p>
-                <select id="size-select">
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                </select>
-                <button id="buy-button">Buy 🛒</button>
+                <button id="buy-button" type="button" aria-expanded="false" aria-controls="hero-size-menu">Buy 🛒</button>
+                <div id="hero-size-menu" class="size-menu" hidden></div>
             </div>
             <div id="left-arrow" class="arrow">&lt;</div>
             <div id="right-arrow" class="arrow">&gt;</div>
