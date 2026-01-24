@@ -98,7 +98,7 @@
         };
 
         const render = (time) => {
-            const t = time * 0.0004;
+            const t = time * 0.0008;
             const scrollOffset = (window.scrollY || window.pageYOffset || 0) * 0.2;
             const wrappedOffset = height ? scrollOffset % height : 0;
             context.clearRect(0, 0, width, height);
