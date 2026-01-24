@@ -1338,6 +1338,7 @@ body.modal-open {
     #hero,
     #hero .hero-bg-layer {
         background-size: calc(100% - 5rem) auto;
+        background-position: top center;
     }
 
     .arrow {
