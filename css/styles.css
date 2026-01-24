@@ -1331,8 +1331,8 @@ body.modal-open {
     #hero {
         touch-action: pan-y;
         align-items: flex-end;
-        padding-top: 2.5rem;
-        padding-bottom: clamp(2.5rem, 8vw, 8rem);
+        padding-top: 5rem;
+        padding-bottom: clamp(2.5rem, 4vw, 8rem);
     }
 
     #hero,
