@@ -1350,7 +1350,8 @@ body.modal-open {
     }
 
     .hero-content {
-        margin-bottom: 0;
+        margin: 0 auto;
+        transform: translateY(-5rem);
     }
 
     .product-card .size-option {
